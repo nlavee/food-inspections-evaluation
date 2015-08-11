@@ -19,15 +19,16 @@ geneorama::sourceDir("CODE/functions/")
 ## LOAD CACHED RDS FILES
 ##==============================================================================
 foodInspect <- readRDS("DATA/food_inspections.Rds")
-foodInspect <- filter_foodInspect(foodInspect)
+foodInspect <- filter_foodInspect(foodInspect) # clean up dataset, look in function for more details
 
 ##==============================================================================
 ## CALCULATE FEATURES BASED ON FOOD INSPECTION DATA
 ##==============================================================================
 
 ## Calculate violation matrix and put into data.table with inspection id as key
-## calculate_violation_types calculates violations by categories:
+## Calculate_violation_types calculates violations by categories:
 ##       Critical, serious, and minor violations
+## 
 violation_dat <- calculate_violation_types(foodInspect$Violations,
                                            Inspection_ID = foodInspect$Inspection_ID)
 saveRDS(violation_dat, "DATA/violation_dat.Rds")

@@ -20,7 +20,7 @@ calculate_violation_types <- function(violation_text, ...){
                        function(item) regmatches(x = item, 
                                                  m = gregexpr(pattern = "^[0-9]+", 
                                                               text = item)))
-    vio_mat <- geneorama::list2matrix(vio_nums, count = T)
+    vio_mat <- geneorama::list2matrix(vio_nums, count = T) ### Converts a list of vectors into an indicator matrix that spans the universe of the list elements
     vio_mat <- vio_mat[ , order(as.numeric(colnames(vio_mat)))]
     # colnames(vio_mat)
     # range(vio_mat)
@@ -30,7 +30,7 @@ calculate_violation_types <- function(violation_text, ...){
     minorCount <- apply(vio_mat[ , colnames(vio_mat) %in% 30:44], 1, sum)
     
     ## Extract the key from the ...'s
-    key_vec <- list(...)
+    key_vec <- list(...) ### Put inspection id into a list
     
     ## Check if the key is in the ...'s
     if(length(key_vec) != 1) {
@@ -39,16 +39,17 @@ calculate_violation_types <- function(violation_text, ...){
     
     ## Check key length
     if(length(key_vec[[1]]) != length(violation_text)){
-        stop("The length of the key must match the length of the first argument")
+        stop("The length of the key must match the length of the first argument") ## Making sure that we have as many violation box as inspections. In another word, all violations are accopmanied with a specific inspection id
     }
     
     ## Construct return values
     ret <- data.table(criticalCount,
                       seriousCount,
                       minorCount)
+    
     data.table::set(x = ret, 
-                    j = names(key_vec), 
-                    value = key_vec[[1]])
-    setkeyv(ret, names(key_vec))
+                    j = names(key_vec), # this is inspection id list
+                    value = key_vec[[1]]) # get the actual inspection value
+    setkeyv(ret, names(key_vec)) # this line sorts the data table by inspection number
     return(ret)
 }

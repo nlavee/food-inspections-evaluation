@@ -36,17 +36,18 @@ calculate_heat_values <- function(inspections,
     observed_values <- na.omit(observed_values)
     
     ## Create index values for pages
-    N <- nrow(inspections)
-    START_ROWS <- seq(1, N, page_limit)
-    END_ROWS <- c(seq(1, N, page_limit)[-1] - 1, N)
-    II <- mapply(`:`, START_ROWS, END_ROWS)
+    N <- nrow(inspections) #number of row in inspection
+    START_ROWS <- seq(1, N, page_limit) #go from 1 --> number of row, jump 500 numbers each time, indicating the start of a new bin of rows
+    END_ROWS <- c(seq(1, N, page_limit)[-1] - 1, N) # create vector that include all the end rows of the starts row above, also include the stretch from last end row till end of data frame. The negative number in bracket excludes the specific value at that index.
+    II <- mapply(`:`, START_ROWS, END_ROWS) #run c(start_row : end rows) for each start_row elements, resulting in a a bunch of vector inside vector that correlates to how we split up this dataset
     
     ret <- rbindlist(lapply(II, function(ii) {
         if(verbose){
             print(paste(sys.call()[2], "out of", length(II)))
         }
+        
         foverlaps(    
-            x = inspections[i = ii, 
+            x = inspections[i = ii,
                             j = list(Inspection_ID, 
                                      Latitude, 
                                      Longitude), 
